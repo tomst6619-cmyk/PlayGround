@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#ffcf4a" />
+    <meta name="description" content="MÜLLMANN – das 3D-Nachbarschaftsspiel: Müll sammeln, Nachbarn bewerfen und Batman vor fliegenden Anwohnern retten. Mit Max dem Hasen." />
+    <title>MÜLLMANN – Die Nachbarschaft räumt auf</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗑️</text></svg>" />
+    <script type="module" crossorigin src="./assets/index-DQFbZJiC.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-dSMC4XCr.css">
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="scene" aria-label="3D-Spielwelt"></canvas>
+      <div class="vignette" aria-hidden="true"></div>
+      <div class="grain" aria-hidden="true"></div>
+
+      <!-- ============ HUD ============ -->
+      <div id="hud" class="hidden">
+        <div class="hud-left">
+          <div class="brand small">
+            <span class="brand-main">MÜLLMANN</span>
+            <span class="brand-sub">Räumt auf!</span>
+          </div>
+          <div class="stat-row">
+            <div class="stat score"><span class="stat-icon">★</span><span class="stat-label">Punkte</span><strong id="score">0</strong></div>
+            <div class="stat bag"><span class="stat-icon">🛍</span><span class="stat-label">Tüte</span><strong id="bag">0/10</strong></div>
+            <div class="stat carrot"><span class="stat-icon">🥕</span><span class="stat-label">Karotten</span><strong id="carrots">0</strong></div>
+          </div>
+          <div id="objectiveCard" class="objective-card">
+            <span class="objective-kicker">Auftrag</span>
+            <div class="objective-text">Säubere die Nachbarschaft</div>
+            <div class="progress"><div id="progressFill"></div></div>
+            <div class="objective-meta"><span id="progressText">0 / 36 Müllsäcke</span><span id="houseText">0 / 12 Häuser</span></div>
+          </div>
+          <div id="eventFeed" class="event-feed"></div>
+        </div>
+
+        <div class="hud-right">
+          <div class="minimap-card">
+            <canvas id="minimap" width="180" height="180"></canvas>
+            <span class="minimap-n">N</span>
+            <span class="minimap-legend"><i class="dot trash"></i>Müll <i class="dot npc"></i>Nachbar</span>
+          </div>
+          <button id="muteBtn" class="icon-btn" aria-label="Ton an/aus" title="Ton an/aus">🔊</button>
+        </div>
+
+        <div class="hud-center">
+          <div id="toast" class="toast"></div>
+          <div id="banner" class="banner"></div>
+          <div id="crosshair" class="crosshair">
+            <span></span><span></span><span></span><span></span>
+            <i id="chargeRing"></i>
+          </div>
+          <div id="prompt" class="prompt"><kbd>E</kbd><span id="promptText"></span></div>
+        </div>
+
+        <div class="hud-bottom">
+          <div id="desktopHints" class="hints">
+            <span><kbd>WASD</kbd> Laufen</span>
+            <span><kbd>Shift</kbd> Sprinten</span>
+            <span><kbd>E</kbd> Nehmen</span>
+            <span><kbd>Maus</kbd> Werfen (halten)</span>
+            <span><kbd>M</kbd> Ton</span>
+          </div>
+          <div class="hint-mobile hidden" id="mobileHint">Linker Daumen laufen · rechts umschauen</div>
+          <button id="pauseBtn" class="icon-btn pause" aria-label="Pause">Ⅱ</button>
+        </div>
+
+        <div id="comicLayer" class="comic-layer"></div>
+      </div>
+
+      <!-- ============ TOUCH CONTROLS ============ -->
+      <div id="touchUI" class="touch-ui hidden" aria-hidden="true">
+        <div id="stickZone" class="stick-zone">
+          <div id="stickBase" class="stick-base"><div id="stickKnob" class="stick-knob"></div></div>
+        </div>
+        <div class="touch-buttons">
+          <button id="actionBtn" class="round-btn action"><span class="round-icon">✋</span><small>Nehmen</small></button>
+          <button id="throwBtn" class="round-btn throw"><span class="round-icon">💥</span><small>Werfen</small></button>
+        </div>
+      </div>
+
+      <!-- ============ START SCREEN ============ -->
+      <section id="startScreen" class="overlay start-screen">
+        <div class="sky-deco" aria-hidden="true">
+          <div class="sun"></div>
+          <div class="cloud c1"></div>
+          <div class="cloud c2"></div>
+          <div class="cloud c3"></div>
+          <div class="birds">⌄ ⌄ ⌄</div>
+        </div>
+        <div class="start-grid">
+          <div class="hero">
+            <div class="logo-lockup">
+              <div class="logo-badge">
+                <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M20 22h24l-2.5 30a6 6 0 0 1-6 5.5h-7A6 6 0 0 1 22.5 52Z" fill="#2e312b"/><path d="M18 16h28l1 7H17Z" fill="#4a4f45"/><path d="M28 10c0 3 8 3 8 0" stroke="#2e312b" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M26 32v18M32 32v20M38 31v18" stroke="#8b9283" stroke-width="2.4" stroke-linecap="round"/></svg>
+              </div>
+              <div class="logo-type">
+                <h1>MÜLL<span>MANN</span></h1>
+                <p>Die Nachbarschaft räumt auf</p>
+              </div>
+            </div>
+            <p class="hero-copy">
+              Du bist der neue Müllmann. Sammle den Dreck von Haus zu Haus,
+              wirf ihn auf die Nachbarn – und rette Batman vor wütenden,
+              fliegenden Anwohnern. Max der Hase wartet auch schon.
+            </p>
+            <div class="hero-actions">
+              <button id="startBtn" class="start-btn" aria-label="Start">
+                <span class="play-tri">▶</span>
+                <span>Spiel starten</span>
+              </button>
+              <span class="start-note">Kein Download. Einfach losräumen.</span>
+            </div>
+            <div class="feature-row">
+              <div class="feature"><span class="f-icon bag-icon">🗑</span><strong>Müll sammeln</strong><small>36 Stück in 12 Gärten</small></div>
+              <div class="feature"><span class="f-icon">💥</span><strong>Nachbarn bewerfen</strong><small>Sie fliegen zu Batman</small></div>
+              <div class="feature"><span class="f-icon">🥕</span><strong>Max füttern</strong><small>Der Hase mag Karotten</small></div>
+            </div>
+          </div>
+
+          <aside class="briefing">
+            <div class="tape tape-top" aria-hidden="true"></div>
+            <div class="tape tape-bottom" aria-hidden="true"></div>
+            <span class="briefing-kicker">// Einsatzbesprechung</span>
+            <h2>Der Plan</h2>
+            <ol class="todo">
+              <li><b>1</b><span>Müll in den Gärten einsammeln. <em>E</em> drücken.</span></li>
+              <li><b>2</b><span>Am Müll-Laster hinten alles abladen. <em>E</em> beim Truck.</span></li>
+              <li><b>3</b><span>Müll auf Nachbarn werfen. <em>Maus</em> halten und loslassen.</span></li>
+              <li><b>4</b><span>Bewirf sie so lange, bis sie zu Batman fliegen. <em>Batman-Tackle!</em></span></li>
+              <li><b>5</b><span>Karotten aufheben und Max damit füttern. <em>Süß.</em></span></li>
+            </ol>
+            <div class="control-grid">
+              <div><kbd>W A S D</kbd><span>Laufen</span></div>
+              <div><kbd>Maus</kbd><span>Umschauen</span></div>
+              <div><kbd>Shift</kbd><span>Sprinten</span></div>
+              <div><kbd>E</kbd><span>Aktion</span></div>
+              <div><kbd>Leertaste</kbd><span>Hüpfen</span></div>
+              <div><kbd>M</kbd><span>Ton</span></div>
+            </div>
+            <div class="stamp">GENEHMIGT<br /><small>vom Ordnungsamt</small></div>
+          </aside>
+        </div>
+        <div class="start-footer">Ein kleines, absurd ehrliches Nachbarschaftsspiel · gebaut mit Three.js</div>
+      </section>
+
+      <!-- ============ PAUSE ============ -->
+      <section id="pauseScreen" class="overlay pause-screen hidden">
+        <div class="pause-card">
+          <span class="briefing-kicker">// Pause</span>
+          <h2>Kurz durchatmen.</h2>
+          <p>Der Müll läuft nicht weg. Batman schon.</p>
+          <button id="resumeBtn" class="start-btn small"><span class="play-tri">▶</span><span>Weiter geht's</span></button>
+          <button id="pauseRestartBtn" class="text-btn">Neu starten</button>
+        </div>
+      </section>
+
+      <!-- ============ WIN ============ -->
+      <section id="winScreen" class="overlay win-screen hidden">
+        <div class="win-card">
+          <span class="briefing-kicker">// Auftrag erledigt</span>
+          <h2>Nachbarschaft <span>sauber!</span></h2>
+          <p id="winLine">Kein Krümel, kein Krümelchen. Sogar Batman ist stolz.</p>
+          <div class="win-stats">
+            <div><strong id="winScore">0</strong><span>Punkte</span></div>
+            <div><strong id="winTrash">0</strong><span>Müll entsorgt</span></div>
+            <div><strong id="winBonks">0</strong><span>Nachbarn getroffen</span></div>
+            <div><strong id="winTackles">0</strong><span>Batman-Tackles</span></div>
+            <div><strong id="winCarrots">0</strong><span>Max gefüttert</span></div>
+          </div>
+          <button id="restartBtn" class="start-btn"><span class="play-tri">↻</span><span>Nochmal spielen</span></button>
+        </div>
+      </section>
+
+      <div id="rotateNotice" class="rotate-notice hidden">Bitte das Gerät quer halten für die volle Nachbarschaft.</div>
+    </div>
+  </body>
+</html>
