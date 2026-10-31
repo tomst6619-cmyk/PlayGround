@@ -42,6 +42,22 @@ Getting caught triggers a jump scare and a retry. There is no penalty for taking
 
 The layout respects phone safe areas and disables browser gestures on the game surface, so it plays in portrait or landscape on Android and iOS.
 
+## GYM SURGE bonus game
+
+A second, lighter first-person game is included: **GYM SURGE** (`gym.html`), linked from the SOUL EYES start screen.
+
+You are in the St. Mercy sports hall during a size-shift trial. Collect glowing energy orbs and hold the surge for 60 seconds. Sport boys shrink as the surge takes hold and burn out quickly; sport girls grow taller and hold the charge longer. If your charge empties, the outfit resets with a flash and you have to release and recharge.
+
+- `WASD` / left joystick: move
+- `Space` / `HOLD` button: surge
+- Mouse drag / touch drag: look
+- `Esc` / `P`: pause
+- `M`: mute
+
+Your best surge time is stored separately for the boys' and girls' trials. The background athletes run their own surge cycles so you can watch the boys burn out sooner and the girls hold the court longer.
+
+A Toms tsi school sports experiment.
+
 ## Run locally
 
 The game is plain static HTML/JS. Any static file server works:
