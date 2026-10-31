@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#e9f2d8">
+  <meta name="description" content="Hasen-Hoppel: Ein gemütliches Sortierspiel. Bringe jeden Hasen zu seinen Farbfreunden.">
+  <title>Hasen-Hoppel · Hasen nach Farbe sortieren</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 70'%3E%3Cellipse cx='22' cy='17' rx='6' ry='15' fill='%23f08a4b'/%3E%3Cellipse cx='42' cy='17' rx='6' ry='15' fill='%23f08a4b'/%3E%3Cellipse cx='32' cy='42' rx='19' ry='18' fill='%23f08a4b'/%3E%3Ccircle cx='25' cy='40' r='2.4' fill='%233d2d23'/%3E%3Ccircle cx='39' cy='40' r='2.4' fill='%233d2d23'/%3E%3Cellipse cx='32' cy='47' rx='3' ry='2.2' fill='%23c8576c'/%3E%3C/svg%3E">
+</head>
+<body>
+  <div class="scene" aria-hidden="true">
+    <span class="sun"></span>
+    <span class="cloud cloud-a"></span>
+    <span class="cloud cloud-b"></span>
+    <span class="cloud cloud-c"></span>
+    <span class="hill hill-back"></span>
+    <span class="hill hill-front"></span>
+    <span class="grass"></span>
+    <span class="flower" style="--x:7%;--y:20%;--s:1"></span>
+    <span class="flower" style="--x:18%;--y:8%;--s:.8"></span>
+    <span class="flower" style="--x:83%;--y:14%;--s:1.1"></span>
+    <span class="flower" style="--x:94%;--y:30%;--s:.85"></span>
+    <span class="flower" style="--x:11%;--y:72%;--s:.9"></span>
+    <span class="flower" style="--x:89%;--y:78%;--s:1"></span>
+    <span class="butterfly" style="--x:14%;--y:38%"></span>
+    <span class="butterfly" style="--x:86%;--y:55%;animation-delay:-3s"></span>
+  </div>
+
+  <div class="app">
+    <header class="topbar">
+      <button class="icon-btn" id="levelsBtn" type="button" aria-label="Level auswählen" title="Level auswählen">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg>
+      </button>
+
+      <div class="level-title">
+        <span class="kicker" id="levelKicker">Wiese 1 von 18</span>
+        <h1 id="levelName">Kleewiese</h1>
+      </div>
+
+      <div class="header-right">
+        <span class="moves-pill" aria-label="Züge">
+          <span class="moves-label">Züge</span>
+          <b id="movesCount">0</b>
+        </span>
+        <button class="icon-btn" id="helpBtn" type="button" aria-label="Spielregeln anzeigen" title="Spielregeln">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.1a2.6 2.6 0 1 1 3.8 2.4c-.9.5-1.4 1-1.4 2.1"/><circle cx="12" cy="17.2" r=".9" fill="currentColor" stroke="none"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="stage">
+      <div class="board" id="board" role="group" aria-label="Gehege mit Hasen"></div>
+      <p class="status" id="status" role="status" aria-live="polite">Tippe den obersten Hasen an, der hoppeln soll.</p>
+    </main>
+
+    <footer class="controls" aria-label="Spielhilfen">
+      <button class="tool-btn" id="hintBtn" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M8.4 14.5a6.5 6.5 0 1 1 7.2 0c-.9.7-1.6 1.5-1.6 2.5H10c0-1-.7-1.8-1.6-2.5Z"/></svg>
+        <span>Hinweis</span>
+      </button>
+      <button class="tool-btn" id="undoBtn" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 7 4 11.5 8.5 16"/><path d="M4.5 11.5H14a5.5 5.5 0 0 1 0 11h-2"/></svg>
+        <span>Zurück</span>
+      </button>
+      <button class="tool-btn" id="restartBtn" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.5 12a7.5 7.5 0 1 1-2.5-5.6"/><path d="M19.5 4.5V9H15"/></svg>
+        <span>Neu</span>
+      </button>
+      <button class="tool-btn icon-only" id="soundBtn" type="button" aria-label="Ton ausschalten" aria-pressed="true" title="Ton">
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="sound-on"><path d="M4 9.5v5h3l4 3v-11l-4 3H4Z"/><path d="M15 9a4.2 4.2 0 0 1 0 6"/><path d="M17.7 6.4a8 8 0 0 1 0 11.2"/></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="sound-off"><path d="M4 9.5v5h3l4 3v-11l-4 3H4Z"/><path d="m15.5 9.5 5 5M20.5 9.5l-5 5"/></svg>
+      </button>
+    </footer>
+  </div>
+
+  <div class="overlay" id="introOverlay">
+    <section class="modal intro-modal" role="dialog" aria-modal="true" aria-labelledby="introTitle">
+      <div class="hero-bunnies" id="heroBunnies" aria-hidden="true"></div>
+      <p class="brand">Hasen-Hoppel</p>
+      <h2 id="introTitle">Sortiere die Hasen<br>nach Farbe</h2>
+      <p class="lede">Jede Fellfarbe möchte in ihrem eigenen Gehege kuscheln. Hoppe mit den Hasen hin und her, bis alle Farben beieinander sind.</p>
+      <ol class="rules">
+        <li><span class="rule-num">1</span><span>Tippe auf ein Gehege, um den <b>obersten Hasen</b> auszuwählen.</span></li>
+        <li><span class="rule-num">2</span><span>Tippe auf ein anderes Gehege, damit er hinüberhoppelt.</span></li>
+        <li><span class="rule-num">3</span><span>Er darf nur zu <b>gleichen Farben</b> oder in ein <b>leeres Gehege</b> – und dort muss noch Platz sein.</span></li>
+      </ol>
+      <p class="intro-progress" id="introProgress"></p>
+      <div class="intro-actions">
+        <button class="primary-btn" id="startBtn" type="button">Loshoppeln</button>
+        <button class="ghost-btn" id="introLevelsBtn" type="button">Level auswählen</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="overlay" id="levelsOverlay" hidden>
+    <section class="modal levels-modal" role="dialog" aria-modal="true" aria-labelledby="levelsTitle">
+      <div class="modal-head">
+        <h2 id="levelsTitle">Wähle eine Wiese</h2>
+        <button class="icon-btn small" id="closeLevelsBtn" type="button" aria-label="Schließen">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+        </button>
+      </div>
+      <p class="modal-sub">Jede geschaffte Wiese schaltet die nächste frei.</p>
+      <div class="level-grid" id="levelGrid"></div>
+    </section>
+  </div>
+
+  <div class="overlay" id="winOverlay" hidden>
+    <section class="modal win-modal" role="dialog" aria-modal="true" aria-labelledby="winTitle">
+      <div class="win-bunnies" id="winBunnies" aria-hidden="true"></div>
+      <p class="brand" id="winKicker">Wiese 1 · Kleewiese</p>
+      <h2 id="winTitle">Alle Hasen kuscheln!</h2>
+      <div class="star-row" id="winStars" aria-label="Sterne"></div>
+      <p class="win-text" id="winText"></p>
+      <button class="primary-btn" id="nextBtn" type="button">Nächste Wiese</button>
+      <div class="win-secondary">
+        <button class="ghost-btn" id="replayBtn" type="button">Nochmal</button>
+        <button class="ghost-btn" id="winLevelsBtn" type="button">Wiesen</button>
+      </div>
+    </section>
+  </div>
+
+  <canvas id="confetti" aria-hidden="true"></canvas>
+
+  <script src="levels.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
