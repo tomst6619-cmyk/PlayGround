@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#04070f">
+  <meta name="description" content="Ufos schauen — eine atmosphärische Nachtwache am Teleskop. Filme die echten Kontakte und ignoriere Flugzeuge, Satelliten und Meteore.">
+  <title>Ufos schauen — Nachtwache am Teleskop</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main id="app" class="app is-menu">
+    <canvas id="sky" role="img" aria-label="Nachthimmel über der Sternwarte Hochwald"></canvas>
+
+    <div class="lens-vignette" aria-hidden="true"></div>
+    <div class="lens-scanlines" aria-hidden="true"></div>
+
+    <div class="rec-frame" id="rec-frame" aria-hidden="true">
+      <span class="rec-dot"></span>
+      <span class="rec-label">REC</span>
+      <span class="rec-time" id="rec-time">00:00</span>
+    </div>
+
+    <header class="hud" id="hud" aria-hidden="true">
+      <div class="hud-brand">
+        <span class="brand-kicker">Sternwarte Hochwald</span>
+        <span class="brand-title">UFOS<br>SCHAUEN</span>
+      </div>
+
+      <div class="hud-signal">
+        <div class="signal-row">
+          <span class="micro-label">SIGNAL</span>
+          <span class="signal-value" id="signal-value">100</span>
+        </div>
+        <div class="signal-track" role="progressbar" aria-label="Signalstärke" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" id="signal-bar">
+          <div class="signal-fill" id="signal-fill"></div>
+          <div class="signal-ticks" aria-hidden="true"></div>
+        </div>
+        <div class="wave-row">
+          <span id="wave-label">WELLE 01</span>
+          <span class="wave-sep" aria-hidden="true">/</span>
+          <span id="clock">23:47</span>
+        </div>
+      </div>
+
+      <div class="hud-score">
+        <span class="micro-label">PUNKTE</span>
+        <span class="score-value" id="score-value">0</span>
+        <span class="combo" id="combo-value">SERIE ×1</span>
+      </div>
+    </header>
+
+    <aside class="film-panel" id="film-panel" aria-hidden="true">
+      <div class="film-head">
+        <span class="micro-label">FILMVORRAT</span>
+        <span class="film-percent" id="film-percent">100%</span>
+      </div>
+      <div class="film-track" role="progressbar" aria-label="Filmvorrat" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" id="film-bar">
+        <div class="film-fill" id="film-fill"></div>
+      </div>
+      <div class="logbook">
+        <span class="micro-label">LOGBUCH</span>
+        <span class="logbook-count" id="logbook-count">00</span>
+        <span class="logbook-types" id="logbook-types">S 0 · D 0 · O 0</span>
+      </div>
+    </aside>
+
+    <div class="hint" id="hint" aria-hidden="true">
+      <span class="hint-item hint-desktop"><kbd>Maus</kbd> Zielen</span>
+      <span class="hint-item hint-touch"><kbd>Finger</kbd> Zielen</span>
+      <span class="hint-divider"></span>
+      <span class="hint-item"><kbd>Halten</kbd> Filmen</span>
+      <span class="hint-divider"></span>
+      <span class="hint-item hint-warn">Nicht alles ist ein Ufo.</span>
+    </div>
+
+    <div class="transmission" id="transmission" aria-live="polite">
+      <span class="transmission-tag">FUNK · BASIS</span>
+      <span class="transmission-text" id="transmission-text"></span>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite">
+      <span class="toast-kicker" id="toast-kicker">KONTAKT</span>
+      <span class="toast-main" id="toast-main">BESTÄTIGT</span>
+      <span class="toast-sub" id="toast-sub"></span>
+    </div>
+
+    <div class="screen-flash" id="screen-flash" aria-hidden="true"></div>
+
+    <div class="utility" id="utility" aria-hidden="true">
+      <button class="icon-btn" id="btn-mute" type="button" aria-label="Ton ausschalten" title="Ton an/aus">
+        <svg class="icon-sound-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4Z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/><path d="M19 6a8.5 8.5 0 0 1 0 12"/></svg>
+        <svg class="icon-sound-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4Z"/><path d="m17 9 4 6m0-6-4 6"/></svg>
+      </button>
+      <button class="icon-btn" id="btn-pause" type="button" aria-label="Pause" title="Pause">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12M15 6v12"/></svg>
+      </button>
+    </div>
+
+    <section class="overlay overlay-menu is-open" id="overlay-menu" aria-labelledby="game-title">
+      <div class="menu-meta" aria-hidden="true">
+        <span>OBSERVATORIUM HOCHWALD</span>
+        <span>23:47 · LUFTFEUCHTE 62% · SEEING 4/5</span>
+      </div>
+
+      <div class="menu-inner">
+        <p class="eyebrow"><span class="eyebrow-line"></span>Nachtwache · Protokoll 07</p>
+        <h1 class="game-title" id="game-title">UFOS<br><span>SCHAUEN</span></h1>
+        <p class="tagline">Die Nacht ist voller Lichter.<br><em>Die meisten sind irdisch.</em></p>
+
+        <div class="menu-actions">
+          <button class="btn btn-primary" id="btn-start" type="button">
+            <span>Start</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+          </button>
+          <div class="best-score">BESTLEISTUNG <strong id="best-score">0</strong></div>
+        </div>
+
+        <div class="instructions">
+          <article class="instruction">
+            <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="7"/><path d="M16 3v6M16 23v6M3 16h6M23 16h6"/></svg>
+            <h2>Zielen</h2>
+            <p>Maus bewegen oder Finger auflegen und ziehen.</p>
+          </article>
+          <article class="instruction">
+            <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="6" y="9" width="20" height="14" rx="2"/><circle cx="16" cy="16" r="4"/><path d="M11 9l2-3h6l2 3"/></svg>
+            <h2>Filmen</h2>
+            <p>Maustaste oder <kbd>Leertaste</kbd> halten. Filmvorrat im Blick behalten.</p>
+          </article>
+          <article class="instruction">
+            <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M2 16s5-8 14-8 14 8 14 8-5 8-14 8S2 16 2 16Z"/><circle cx="16" cy="16" r="4"/><path d="m20 12 4-4"/></svg>
+            <h2>Prüfen</h2>
+            <p>Flugzeuge, Satelliten und Meteore sind keine Ufos.</p>
+          </article>
+        </div>
+      </div>
+
+      <div class="menu-foot">
+        <span>Ein Spiel über Dinge, die man besser nur beobachtet.</span>
+        <span class="menu-foot-right" aria-hidden="true">AZ 000° · ELV 32°</span>
+      </div>
+    </section>
+
+    <section class="overlay overlay-pause" id="overlay-pause" aria-labelledby="pause-title" aria-hidden="true">
+      <div class="card pause-card">
+        <p class="eyebrow"><span class="eyebrow-line"></span>Verbindung pausiert</p>
+        <h2 class="card-title" id="pause-title">PAUSE</h2>
+        <p class="card-copy">Die Sterne warten. Das Signal auch.</p>
+        <div class="card-actions">
+          <button class="btn btn-primary" id="btn-resume" type="button">Weiter</button>
+          <button class="btn btn-ghost" id="btn-restart" type="button">Neustart</button>
+        </div>
+        <p class="card-hint"><kbd>Esc</kbd> weiter · <kbd>M</kbd> Ton</p>
+      </div>
+    </section>
+
+    <section class="overlay overlay-over" id="overlay-over" aria-labelledby="over-title" aria-hidden="true">
+      <div class="card over-card">
+        <p class="eyebrow"><span class="eyebrow-line"></span><span id="over-eyebrow">Nachtwache beendet</span></p>
+        <h2 class="card-title card-title-danger" id="over-title">SIGNAL<br>VERLOREN</h2>
+        <p class="card-copy" id="over-copy">Die Verbindung ist abgebrochen. Der Himmel bleibt.</p>
+
+        <div class="result-grid">
+          <div class="result-main">
+            <span class="micro-label">PUNKTE</span>
+            <strong id="final-score">0</strong>
+            <span class="new-best" id="new-best" hidden>NEUE BESTLEISTUNG</span>
+          </div>
+          <dl class="result-stats">
+            <div><dt>Ufos gefilmt</dt><dd id="final-captures">0</dd></div>
+            <div><dt>Fehlalarme</dt><dd id="final-false">0</dd></div>
+            <div><dt>Entkommen</dt><dd id="final-escaped">0</dd></div>
+            <div><dt>Beste Serie</dt><dd id="final-combo">×1</dd></div>
+          </dl>
+        </div>
+
+        <div class="logbook-summary" id="logbook-summary" aria-label="Gefilmte Objekte"></div>
+
+        <div class="card-actions">
+          <button class="btn btn-primary" id="btn-again" type="button">Nochmal</button>
+          <button class="btn btn-ghost" id="btn-menu" type="button">Zum Start</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="./js/game.mjs"></script>
+</body>
+</html>
