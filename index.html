@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#050505">
+<title>SOUL EYES — a hospital nightmare</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23050505'/%3E%3Ccircle cx='22' cy='32' r='8' fill='%23ffd23a'/%3E%3Ccircle cx='42' cy='32' r='8' fill='%23ffd23a'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+  <canvas id="scene" aria-label="Soul Eyes game view"></canvas>
+
+  <div id="hud" class="hidden" aria-hidden="true">
+    <button id="pauseBtn" class="icon-btn" aria-label="Pause">
+      <span></span><span></span>
+    </button>
+
+    <div id="objective">
+      <div class="obj-label">SOULS</div>
+      <div id="soulPips"><i></i><i></i><i></i><i></i><i></i></div>
+    </div>
+
+    <div id="timer"><span class="rec"></span><span id="clock">00:00</span></div>
+
+    <div id="compass"><span class="arrow">▲</span><span class="dist">EXIT</span></div>
+
+    <div id="crosshair"></div>
+
+    <div id="staminaWrap"><div id="stamina"></div></div>
+
+    <div id="hint" role="status"></div>
+
+    <div id="joystick">
+      <div class="ring"></div>
+      <div id="stick"></div>
+    </div>
+
+    <button id="sprintBtn" class="touch-btn">SPRINT</button>
+    <button id="lightBtn" class="touch-btn small" aria-label="Toggle flashlight">LIGHT</button>
+    <button id="muteBtn" class="touch-btn small" aria-label="Toggle sound">SND</button>
+
+    <div id="threat"></div>
+    <div id="flash"></div>
+  </div>
+
+  <div id="startScreen" class="screen menu">
+    <div class="menu-inner">
+      <div class="eyebrow">ST. MERCY'S HOSPITAL &middot; 02:47 AM</div>
+      <div class="title-eyes"><i></i><i></i></div>
+      <h1>SOUL<span>EYES</span></h1>
+      <p class="tagline">It sees what you carry.<br>Five souls. One way out.</p>
+      <button id="startBtn" class="primary">Start</button>
+      <div class="controls">
+        <span><b>WASD</b> move</span>
+        <span><b>SHIFT</b> sprint</span>
+        <span><b>MOUSE / DRAG</b> look</span>
+        <span><b>F</b> flashlight</span>
+      </div>
+      <p class="headphones">HEADPHONES RECOMMENDED</p>
+    </div>
+    <div class="menu-footer">
+      <span>An original browser nightmare</span>
+      <span>v1.0</span>
+    </div>
+  </div>
+
+  <div id="pauseScreen" class="screen hidden">
+    <div class="panel">
+      <div class="panel-eyes"><i></i><i></i></div>
+      <h2>PAUSED</h2>
+      <p class="sub">It waits while you do.</p>
+      <button id="resumeBtn" class="primary">Resume</button>
+      <button id="restartBtn" class="ghost">Restart run</button>
+      <button id="pauseSoundBtn" class="ghost">Sound: on</button>
+    </div>
+  </div>
+
+  <div id="deadScreen" class="screen hidden">
+    <div class="panel dead">
+      <div class="panel-eyes"><i></i><i></i></div>
+      <h2>IT FOUND YOU</h2>
+      <p class="sub" id="deadSub">Your souls belong to it now.</p>
+      <button id="retryBtn" class="primary">Retry</button>
+    </div>
+  </div>
+
+  <div id="winScreen" class="screen hidden">
+    <div class="panel win">
+      <div class="win-mark">V</div>
+      <h2>YOU ESCAPED</h2>
+      <p class="sub" id="winSub">Five souls carried into the light.</p>
+      <button id="againBtn" class="primary">Play again</button>
+    </div>
+  </div>
+
+  <div id="grain"></div>
+  <div id="vignette"></div>
+  <div id="boot"></div>
+</div>
+
+<script type="module" src="js/game.js"></script>
+</body>
+</html>
