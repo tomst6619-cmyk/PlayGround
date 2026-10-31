@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#171321">
+<title>Der letzte Schultag – ein Tod-Trank-Drama</title>
+<meta name="description" content="Guck den Lehrer an. Er wirft dich aus dem Fenster. Er trinkt den Tod-Trank. Dann: Ferien. Ein kurzes, absurdes Schulhof-Drama in vier Akten.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23f7ecd7'/%3E%3Cpath d='M18 26h28v20H18z' fill='%23e4572e'/%3E%3Cpath d='M14 22h36v6H14z' fill='%231d1826'/%3E%3Ccircle cx='26' cy='36' r='3' fill='%23f7ecd7'/%3E%3Ccircle cx='38' cy='36' r='3' fill='%23f7ecd7'/%3E%3Cpath d='M24 43q8 6 16 0' stroke='%23f7ecd7' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<main id="stage" aria-label="Spielbereich">
+  <canvas id="game" aria-label="Der letzte Schultag. Ein Zeichentrick-Spiel über einen Lehrer, einen Fensterwurf und den Tod-Trank."></canvas>
+  <div class="stage-vignette" aria-hidden="true"></div>
+  <div class="stage-grain" aria-hidden="true"></div>
+</main>
+
+<div id="hud" class="hidden" aria-live="polite">
+  <header class="hud-top">
+    <div class="meter-wrap" id="meterWrap">
+      <div class="meter-head"><span id="meterLabel">BLICKKONTAKT</span><span id="meterPct">0 %</span></div>
+      <div class="meter"><i id="meterFill"></i></div>
+    </div>
+    <div class="act-badge" id="actBadge"><small id="actNum">AKT 1</small><strong id="actName">DER BLICK</strong></div>
+    <button id="muteBtn" class="icon-btn" type="button" aria-label="Ton ausschalten" title="Ton an/aus">🔊</button>
+  </header>
+
+  <footer class="hud-bottom">
+    <div class="choice-panel hidden" id="choicePanel" aria-label="Trank auswählen">
+      <button class="choice-btn" type="button" data-potion="kaffee"><i style="--c:#7a4a2a"></i>KAFFEE</button>
+      <button class="choice-btn" type="button" data-potion="tod"><i style="--c:#5fcf72"></i>TOD-TRANK</button>
+      <button class="choice-btn" type="button" data-potion="saft"><i style="--c:#a05bd6"></i>HUSTEN-SAFT</button>
+    </div>
+    <div class="speech" id="speech">
+      <span class="speaker" id="speaker">ERZÄHLER</span>
+      <span class="line" id="line">Mathe, 5. Stunde. Noch eine Minute bis zu den Ferien.</span>
+    </div>
+    <div class="controls" id="controls">
+      <button id="leftBtn" class="game-btn arrow" type="button" aria-label="Nach links lenken">◀</button>
+      <button id="actBtn" class="game-btn primary" type="button">
+        <span id="actIcon" aria-hidden="true">👁</span><span id="actLabel">GUCKEN</span>
+      </button>
+      <button id="rightBtn" class="game-btn arrow" type="button" aria-label="Nach rechts lenken">▶</button>
+      <span id="holdHint" class="hold-hint">gedrückt halten</span>
+    </div>
+  </footer>
+  <div class="portrait-hint" id="portraitHint">↻ Querformat zeigt mehr Schule</div>
+</div>
+
+<div id="title" class="overlay">
+  <div class="title-card">
+    <span class="tape tape-a" aria-hidden="true"></span>
+    <span class="tape tape-b" aria-hidden="true"></span>
+    <p class="kicker">Ein kurzes Schulhof-Drama in 4 Akten</p>
+    <h1>DER LETZTE<br><span>SCHULTAG</span></h1>
+    <p class="tagline">Guck den Lehrer an.<br><em>Was soll schon passieren?</em></p>
+    <button id="startBtn" class="start-btn" type="button">START</button>
+    <div class="chips" aria-hidden="true">
+      <span>1 Lehrer</span><span>1 Tod-Trank</span><span>6 Wochen Ferien</span>
+    </div>
+    <p class="small">Maus, Tastatur oder Touch · ca. 3 Minuten<br>🔊 Mit Ton ist es dramatischer.</p>
+  </div>
+  <p class="title-foot">Tipp: <b>LEERTASTE</b> oder Finger gedrückt halten, um jemanden anzustarren.</p>
+</div>
+
+<div id="end" class="overlay hidden">
+  <div class="end-card">
+    <span class="tape tape-a" aria-hidden="true"></span>
+    <p class="kicker">ENDE · AKT 4</p>
+    <h2>FERIEN<span>!</span></h2>
+    <p class="end-line" id="endLine"></p>
+    <div class="stats">
+      <div><span>BLICKDAUER</span><b id="statStare">–</b></div>
+      <div><span>FLUGWEITE</span><b id="statFlight">–</b></div>
+      <div><span>LANDUNG</span><b id="statLand">–</b></div>
+      <div><span>TRANK</span><b id="statPotion">–</b></div>
+      <div><span>RENNZEIT</span><b id="statRun">–</b></div>
+      <div class="grade"><span>STILNOTE</span><b id="statGrade">–</b></div>
+    </div>
+    <div class="end-actions">
+      <button id="replayBtn" class="start-btn" type="button">NOCHMAL</button>
+      <button id="homeBtn" class="ghost-btn" type="button">TITEL</button>
+    </div>
+    <p class="small">Keine echten Lehrer wurden verletzt.<br>Herr Müller ist jetzt ein Geist. Er findet es okay.</p>
+  </div>
+</div>
+
+<noscript><p class="noscript">Dieses Spiel braucht JavaScript. Sonst gibt es keine Ferien.</p></noscript>
+
+<script src="js/core.js"></script>
+<script src="js/art-characters.js"></script>
+<script src="js/art-props.js"></script>
+<script src="js/game-scenes.js"></script>
+<script src="js/game-render1.js"></script>
+<script src="js/game-render2.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
